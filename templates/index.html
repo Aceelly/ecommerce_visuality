@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Data Explorer</title>
+</head>
+<body>
+    <h1>E-commerce Data Explorer</h1>
+
+    <h2>Upload CSV File</h2>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv">
+        <input type="submit" value="Upload CSV">
+    </form>
+
+    {% if error_message %}
+        <p style="color: red;">Error: {{ error_message }}</p>
+    {% endif %}
+
+    {% if df_summary %}
+        <h2>Dataset Summary</h2>
+        <div>
+            {{ df_summary | safe }}
+        </div>
+
+        <h2>Ask a Question</h2>
+        <form action="/" method="post">
+            <textarea name="query" rows="4" cols="50" placeholder="e.g., Show purchase frequency by age group"></textarea><br>
+            <input type="submit" value="Get Insight">
+        </form>
+
+        {% if visualization %}
+            <h2>Visualization</h2>
+            <img src="data:image/png;base64,{{ visualization }}" alt="Generated Visualization">
+            <form action="/" method="post">
+                <input type="hidden" name="clear_visualization" value="true">
+                <input type="submit" value="Clear Visualization">
+            </form>
+        {% elif query_result_text %}
+            <h2>Query Result</h2>
+            <pre>{{ query_result_text }}</pre>
+            <form action="/" method="post">
+                <input type="hidden" name="clear_visualization" value="true">
+                <input type="submit" value="Clear Result">
+            </form>
+        {% endif %}
+
+    {% endif %}
+</body>
+</html>
