@@ -2,6 +2,8 @@ import os
 import io
 import base64
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg') # Set Matplotlib backend to 'Agg' for non-interactive plotting
 import matplotlib.pyplot as plt
 import google.generativeai as genai
 from flask import Flask, request, render_template, session, redirect, url_for
@@ -15,8 +17,10 @@ load_dotenv(find_dotenv())
 app = Flask(__name__)
 app.secret_key = os.urandom(24) # Secret key for session management
 
-# Global dictionary to store DataFrames
+# Global dictionary to store Dataframes
 dataframes = {}
+# Global dictionary to store visualizations
+visualizations = {}
 
 # Configure Gemini API
 gemini_api_key = os.getenv("GEMINI_API_KEY")
@@ -105,7 +109,8 @@ def index():
                         generated_code = generated_code.lstrip("```python").rstrip("```").strip()
 
                     if generated_code == "CLEAR_VISUALIZATION":
-                        session.pop('visualization', None)
+                        session.pop('visualization_id', None) # Clear visualization ID from session
+                        visualizations.pop(session.get('visualization_id'), None) # Remove visualization from global dict
                         session.pop('query_result_text', None)
                         return redirect(url_for('index'))
 
@@ -123,11 +128,14 @@ def index():
 
                         if exec_locals['img_buffer']:
                             img_base64 = base64.b64encode(exec_locals['img_buffer'].getvalue()).decode('utf-8')
-                            session['visualization'] = img_base64
+                            viz_id = str(uuid.uuid4())
+                            visualizations[viz_id] = img_base64 # Store visualization in global dictionary
+                            session['visualization_id'] = viz_id # Store ID in session
                             session.pop('query_result_text', None) # Clear text if visualization is present
                         elif query_result_text:
                             session['query_result_text'] = query_result_text
-                            session.pop('visualization', None) # Clear visualization if text is present
+                            session.pop('visualization_id', None) # Clear visualization ID if text is present
+                            visualizations.pop(session.get('visualization_id'), None) # Remove visualization from global dict
                         else:
                             error_message = "Gemini generated code but no visualization or text output was produced."
 
@@ -143,7 +151,8 @@ def index():
             else:
                 error_message = "Please upload a CSV file first."
         elif 'clear_visualization' in request.form:
-            session.pop('visualization', None)
+            session.pop('visualization_id', None) # Clear visualization ID from session
+            visualizations.pop(session.get('visualization_id'), None) # Remove visualization from global dict
             session.pop('query_result_text', None)
             return redirect(url_for('index'))
 
@@ -151,7 +160,9 @@ def index():
         df = dataframes[session['df_id']]
         df_summary = get_df_summary(df)
     
-    visualization = session.get('visualization', None)
+    # Retrieve visualization from global dictionary using ID from session
+    visualization_id = session.get('visualization_id', None)
+    visualization = visualizations.get(visualization_id, None) if visualization_id else None
     query_result_text = session.get('query_result_text', None)
 
     return render_template('index.html', df_summary=df_summary, visualization=visualization, error_message=error_message, query_result_text=query_result_text)
