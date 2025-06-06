@@ -10,6 +10,9 @@ from flask import Flask, request, render_template, session, redirect, url_for
 from dotenv import load_dotenv, find_dotenv
 import uuid # Import uuid for unique IDs
 import sys # Import sys for stdout redirection
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 
 # Load environment variables
 load_dotenv(find_dotenv())
@@ -166,6 +169,66 @@ def index():
     query_result_text = session.get('query_result_text', None)
 
     return render_template('index.html', df_summary=df_summary, visualization=visualization, error_message=error_message, query_result_text=query_result_text)
+
+@app.route('/clusters', methods=['GET'])
+def clusters():
+    visualization = None
+    error_message = None
+
+    if 'df_id' in session and session['df_id'] in dataframes:
+        df = dataframes[session['df_id']]
+        
+        try:
+            # Select only numerical columns for clustering
+            numerical_df = df.select_dtypes(include=['number'])
+            
+            if numerical_df.empty:
+                error_message = "No numerical columns found for clustering."
+            else:
+                # Standardize the data
+                scaler = StandardScaler()
+                scaled_data = scaler.fit_transform(numerical_df)
+
+                # Apply PCA to reduce to 2 dimensions
+                pca = PCA(n_components=2)
+                pca_data = pca.fit_transform(scaled_data)
+
+                # Apply K-Means clustering
+                # Using a fixed number of clusters (e.g., 3) for simplicity
+                # In a real application, you might use elbow method or silhouette score to determine optimal k
+                kmeans = KMeans(n_clusters=3, random_state=42, n_init=10) # n_init to suppress warning
+                cluster_labels = kmeans.fit_predict(pca_data)
+
+                # Create scatter plot
+                plt.figure(figsize=(10, 7))
+                scatter = plt.scatter(pca_data[:, 0], pca_data[:, 1], c=cluster_labels, cmap='viridis', s=50, alpha=0.8)
+                plt.title('K-Means Clusters (PCA Reduced)')
+                plt.xlabel('PCA Component 1')
+                plt.ylabel('PCA Component 2')
+                plt.colorbar(scatter, label='Cluster Label')
+                plt.grid(True)
+                plt.tight_layout()
+
+                # Save plot to BytesIO object
+                img_buffer = io.BytesIO()
+                plt.savefig(img_buffer, format='png')
+                img_buffer.seek(0)
+                plt.close('all') # Close plot to free memory
+
+                # Store visualization in global dictionary
+                viz_id = str(uuid.uuid4())
+                visualizations[viz_id] = base64.b64encode(img_buffer.getvalue()).decode('utf-8')
+                session['visualization_id'] = viz_id # Store ID in session
+                session.pop('query_result_text', None) # Clear text if visualization is present
+
+        except Exception as e:
+            error_message = f"Error performing clustering: {e}"
+            plt.close('all') # Ensure plot is closed even on error
+    else:
+        error_message = "Please upload a CSV file first to perform clustering."
+    
+    # Redirect to index page to display the visualization
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
