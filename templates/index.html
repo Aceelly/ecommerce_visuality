@@ -30,6 +30,11 @@
             <input type="submit" value="Get Insight">
         </form>
 
+        <h2>Clustering Analysis</h2>
+        <form action="/clusters" method="get">
+            <input type="submit" value="Perform K-Means Clustering">
+        </form>
+
         {% if visualization %}
             <h2>Visualization</h2>
             <img src="data:image/png;base64,{{ visualization }}" alt="Generated Visualization">
