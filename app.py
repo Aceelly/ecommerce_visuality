@@ -199,6 +199,24 @@ def clusters():
                 kmeans = KMeans(n_clusters=3, random_state=42, n_init=10) # n_init to suppress warning
                 cluster_labels = kmeans.fit_predict(pca_data)
 
+                # Calculate feature contributions to PCA components
+                feature_names = numerical_df.columns
+                pca_components = pca.components_ # This holds the loadings
+
+                pca_features_contribution = []
+                for i, component in enumerate(pca_components):
+                    # Create a list of (feature_name, absolute_loading) tuples
+                    loadings = [(feature_names[j], abs(loading)) for j, loading in enumerate(component)]
+                    # Sort by absolute loading in descending order
+                    loadings.sort(key=lambda x: x[1], reverse=True)
+                    # Get top 3
+                    top_features = loadings[:3]
+                    pca_features_contribution.append({
+                        'component': i + 1,
+                        'features': [{'name': name, 'weight': weight} for name, weight in top_features]
+                    })
+                session['pca_features_contribution'] = pca_features_contribution # Store in session
+
                 # Create scatter plot
                 plt.figure(figsize=(10, 7))
                 scatter = plt.scatter(pca_data[:, 0], pca_data[:, 1], c=cluster_labels, cmap='viridis', s=50, alpha=0.8)
