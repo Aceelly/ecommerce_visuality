@@ -217,6 +217,33 @@ def clusters():
                     })
                 session['pca_features_contribution'] = pca_features_contribution # Store in session
 
+                # Calculate mean values of top 3 PCA features for each cluster
+                # First, get the names of the top 3 features across all components
+                top_3_feature_names = []
+                for comp_data in pca_features_contribution:
+                    for feature in comp_data['features']:
+                        if feature['name'] not in top_3_feature_names:
+                            top_3_feature_names.append(feature['name'])
+                top_3_feature_names = top_3_feature_names[:3] # Ensure only top 3 unique features
+
+                if top_3_feature_names:
+                    # Add cluster labels to the numerical DataFrame
+                    numerical_df_with_clusters = numerical_df.copy()
+                    numerical_df_with_clusters['cluster'] = cluster_labels
+
+                    # Calculate mean values for top features by cluster
+                    cluster_means_df = numerical_df_with_clusters.groupby('cluster')[top_3_feature_names].mean()
+                    
+                    # Convert to a list of dictionaries for easier Jinja2 templating
+                    cluster_means_data = []
+                    for cluster_id, row in cluster_means_df.iterrows():
+                        cluster_data = {'cluster': cluster_id}
+                        for feature_name in top_3_feature_names:
+                            cluster_data[feature_name] = row[feature_name]
+                        cluster_means_data.append(cluster_data)
+                    session['cluster_means'] = cluster_means_data # Store in session
+                    session['cluster_mean_features'] = top_3_feature_names # Store feature names for header
+
                 # Create scatter plot
                 plt.figure(figsize=(10, 7))
                 scatter = plt.scatter(pca_data[:, 0], pca_data[:, 1], c=cluster_labels, cmap='viridis', s=50, alpha=0.8)

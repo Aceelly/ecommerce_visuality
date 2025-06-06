@@ -77,6 +77,30 @@
             </table>
         {% endif %}
 
+        {% if session.get('cluster_means') and session.get('cluster_mean_features') %}
+            <h2>Cluster Mean Values for Top Features</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Cluster</th>
+                        {% for feature_name in session['cluster_mean_features'] %}
+                            <th>{{ feature_name }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cluster_data in session['cluster_means'] %}
+                        <tr>
+                            <td>{{ cluster_data.cluster }}</td>
+                            {% for feature_name in session['cluster_mean_features'] %}
+                                <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
     {% endif %}
 </body>
 </html>
