@@ -51,6 +51,32 @@
             </form>
         {% endif %}
 
+        {% if session.get('pca_features_contribution') %}
+            <h2>PCA Feature Contributions</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>PCA Component</th>
+                        <th>Feature Name</th>
+                        <th>Weight (Absolute)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for component_data in session['pca_features_contribution'] %}
+                        {% for feature in component_data.features %}
+                            <tr>
+                                {% if loop.first %}
+                                    <td rowspan="{{ component_data.features|length }}">Component {{ component_data.component }}</td>
+                                {% endif %}
+                                <td>{{ feature.name }}</td>
+                                <td>{{ "%.4f" | format(feature.weight) }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
     {% endif %}
 </body>
 </html>
