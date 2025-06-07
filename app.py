@@ -13,6 +13,7 @@ import sys # Import sys for stdout redirection
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
+import json # Import json for parsing Gemini's response
 
 # Load environment variables
 load_dotenv(find_dotenv())
@@ -243,6 +244,53 @@ def clusters():
                         cluster_means_data.append(cluster_data)
                     session['cluster_means'] = cluster_means_data # Store in session
                     session['cluster_mean_features'] = top_3_feature_names # Store feature names for header
+
+                    # Generate cluster interpretations using Gemini
+                    cluster_summary_text = "Cluster Mean Values for Top Features:\n"
+                    for cluster_data in cluster_means_data:
+                        cluster_summary_text += f"Cluster {cluster_data['cluster']}: "
+                        for feature_name in top_3_feature_names:
+                            cluster_summary_text += f"{feature_name}={cluster_data[feature_name]:.2f}, "
+                        cluster_summary_text = cluster_summary_text.rstrip(', ') + "\n"
+
+                    print(f"DEBUG: cluster_summary_text sent to Gemini:\n{cluster_summary_text}") # DEBUG PRINT
+                    prompt_interpretation = f"""
+                    You are a data analyst assistant.
+                    Given the following cluster mean values for top features:
+                    {cluster_summary_text}
+
+                    Provide a one-line, human-readable interpretation or label for each cluster.
+                    Return the output as a JSON array of objects, where each object has "cluster" (integer) and "interpretation" (string) keys.
+                    Example:
+                    [
+                      {{"cluster": 0, "interpretation": "Budget-Conscious Buyers"}},
+                      {{"cluster": 1, "interpretation": "High-Value Loyal Customers"}}
+                    ]
+                    """
+                    response_interpretation = model.generate_content(prompt_interpretation)
+                    interpretations_json = response_interpretation.text.strip()
+                    # Remove markdown code fences if Gemini still includes them
+                    if interpretations_json.startswith("```json"):
+                        interpretations_json = interpretations_json.lstrip("```json").rstrip("```").strip()
+                    print(f"DEBUG: Raw interpretations_json from Gemini (after stripping):\n{interpretations_json}") # DEBUG PRINT
+
+                    try:
+                        interpretations = json.loads(interpretations_json)
+                        print(f"DEBUG: Parsed interpretations:\n{interpretations}") # DEBUG PRINT
+                        # Add interpretations to cluster_means_data
+                        interpretation_map = {item['cluster']: item['interpretation'] for item in interpretations}
+                        print(f"DEBUG: Interpretation map:\n{interpretation_map}") # DEBUG PRINT
+                        for cluster_data in cluster_means_data:
+                            cluster_data['interpretation'] = interpretation_map.get(cluster_data['cluster'], 'N/A')
+                        session['cluster_means'] = cluster_means_data # Update session with interpretations
+                        print(f"DEBUG: Final cluster_means_data with interpretations:\n{session['cluster_means']}") # DEBUG PRINT
+                    except json.JSONDecodeError as e:
+                        error_message = f"Error parsing Gemini interpretation: {e}. Raw response: {interpretations_json}"
+                        print(f"ERROR: JSONDecodeError: {e}. Raw response: {interpretations_json}") # DEBUG PRINT
+                    except Exception as e:
+                        error_message = f"Error processing Gemini interpretation: {e}"
+                        print(f"ERROR: General Exception during interpretation processing: {e}") # DEBUG PRINT
+
 
                 # Create scatter plot
                 plt.figure(figsize=(10, 7))
