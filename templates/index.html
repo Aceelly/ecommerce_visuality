@@ -86,6 +86,7 @@
                         {% for feature_name in session['cluster_mean_features'] %}
                             <th>{{ feature_name }}</th>
                         {% endfor %}
+                        <th>Interpretation</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,6 +96,7 @@
                             {% for feature_name in session['cluster_mean_features'] %}
                                 <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
                             {% endfor %}
+                            <td>{{ cluster_data.interpretation }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
