@@ -4,105 +4,293 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-commerce Data Explorer</title>
+    <style>
+        :root {
+            --color-ebb: #ECE4E6;
+            --color-my-pink: #CB967F;
+            --color-hopbush: #D481AC;
+            --color-astral: #327FB1;
+            --color-purple-heart: #951DC3;
+            --color-white: #FFFFFF;
+            --color-black: #000000;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-ebb);
+            color: var(--color-purple-heart);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1, h2 {
+            color: var(--color-hopbush);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        main {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--color-white);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid var(--color-my-pink);
+            border-radius: 5px;
+            background-color: var(--color-white);
+            color: var(--color-purple-heart);
+            cursor: pointer;
+        }
+
+        input[type="submit"], button {
+            background-color: var(--color-hopbush);
+            color: var(--color-white);
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        input[type="submit"]:hover, button:hover {
+            background-color: #b86a92; /* Slightly darker hopbush */
+            transform: translateY(-2px);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--color-my-pink);
+            border-radius: 5px;
+            font-size: 16px;
+            color: var(--color-purple-heart);
+            background-color: var(--color-white);
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden; /* Ensures border-radius applies to table */
+        }
+
+        th, td {
+            border: 1px solid var(--color-my-pink);
+            padding: 12px;
+            text-align: left;
+            color: var(--color-purple-heart);
+        }
+
+        th {
+            background-color: var(--color-hopbush);
+            color: var(--color-white);
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f8f8; /* Lighter shade for even rows */
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border: 1px solid var(--color-my-pink);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-message {
+            color: red;
+            background-color: #ffebeb;
+            border: 1px solid red;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            color: var(--color-purple-heart);
+        }
+
+        /* Specific styling for the "Clear" buttons */
+        .clear-button {
+            background-color: var(--color-astral);
+            margin-top: 10px;
+        }
+
+        .clear-button:hover {
+            background-color: #2a6a96; /* Slightly darker astral */
+        }
+
+        /* Animation for content loading */
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <h1>E-commerce Data Explorer</h1>
+    <header>
+        <h1>E-commerce Data Explorer</h1>
+    </header>
 
-    <h2>Upload CSV File</h2>
-    <form action="/" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".csv">
-        <input type="submit" value="Upload CSV">
-    </form>
-
-    {% if error_message %}
-        <p style="color: red;">Error: {{ error_message }}</p>
-    {% endif %}
-
-    {% if df_summary %}
-        <h2>Dataset Summary</h2>
-        <div>
-            {{ df_summary | safe }}
-        </div>
-
-        <h2>Ask a Question</h2>
-        <form action="/" method="post">
-            <textarea name="query" rows="4" cols="50" placeholder="e.g., Show purchase frequency by age group"></textarea><br>
-            <input type="submit" value="Get Insight">
-        </form>
-
-        <h2>Clustering Analysis</h2>
-        <form action="/clusters" method="get">
-            <input type="submit" value="Perform K-Means Clustering">
-        </form>
-
-        {% if visualization %}
-            <h2>Visualization</h2>
-            <img src="data:image/png;base64,{{ visualization }}" alt="Generated Visualization">
-            <form action="/" method="post">
-                <input type="hidden" name="clear_visualization" value="true">
-                <input type="submit" value="Clear Visualization">
+    <main>
+        <section class="card">
+            <h2>Upload CSV File</h2>
+            <form action="/" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".csv">
+                <input type="submit" value="Upload CSV">
             </form>
-        {% elif query_result_text %}
-            <h2>Query Result</h2>
-            <pre>{{ query_result_text }}</pre>
-            <form action="/" method="post">
-                <input type="hidden" name="clear_visualization" value="true">
-                <input type="submit" value="Clear Result">
-            </form>
+        </section>
+
+        {% if error_message %}
+            <p class="error-message">{{ error_message }}</p>
         {% endif %}
 
-        {% if session.get('pca_features_contribution') %}
-            <h2>PCA Feature Contributions</h2>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>PCA Component</th>
-                        <th>Feature Name</th>
-                        <th>Weight (Absolute)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for component_data in session['pca_features_contribution'] %}
-                        {% for feature in component_data.features %}
+        {% if df_summary %}
+            <section class="card fade-in">
+                <h2>Dataset Summary</h2>
+                <div>
+                    {{ df_summary | safe }}
+                </div>
+            </section>
+
+            <section class="card fade-in">
+                <h2>Ask a Question</h2>
+                <form action="/" method="post">
+                    <textarea name="query" rows="4" cols="50" placeholder="e.g., Show purchase frequency by age group"></textarea><br>
+                    <input type="submit" value="Get Insight">
+                </form>
+            </section>
+
+            <section class="card fade-in">
+                <h2>Clustering Analysis</h2>
+                <form action="/clusters" method="get">
+                    <input type="submit" value="Perform K-Means Clustering">
+                </form>
+            </section>
+
+            {% if visualization %}
+                <section class="card fade-in">
+                    <h2>Visualization</h2>
+                    <img src="data:image/png;base64,{{ visualization }}" alt="Generated Visualization">
+                    <form action="/" method="post">
+                        <input type="hidden" name="clear_visualization" value="true">
+                        <input type="submit" value="Clear Visualization" class="clear-button">
+                    </form>
+                </section>
+            {% elif query_result_text %}
+                <section class="card fade-in">
+                    <h2>Query Result</h2>
+                    <pre>{{ query_result_text }}</pre>
+                    <form action="/" method="post">
+                        <input type="hidden" name="clear_visualization" value="true">
+                        <input type="submit" value="Clear Result" class="clear-button">
+                    </form>
+                </section>
+            {% endif %}
+
+            {% if session.get('pca_features_contribution') %}
+                <section class="card fade-in">
+                    <h2>PCA Feature Contributions</h2>
+                    <table border="1">
+                        <thead>
                             <tr>
-                                {% if loop.first %}
-                                    <td rowspan="{{ component_data.features|length }}">Component {{ component_data.component }}</td>
-                                {% endif %}
-                                <td>{{ feature.name }}</td>
-                                <td>{{ "%.4f" | format(feature.weight) }}</td>
+                                <th>PCA Component</th>
+                                <th>Feature Name</th>
+                                <th>Weight (Absolute)</th>
                             </tr>
-                        {% endfor %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
-
-        {% if session.get('cluster_means') and session.get('cluster_mean_features') %}
-            <h2>Cluster Mean Values for Top Features</h2>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Cluster</th>
-                        {% for feature_name in session['cluster_mean_features'] %}
-                            <th>{{ feature_name }}</th>
-                        {% endfor %}
-                        <th>Interpretation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for cluster_data in session['cluster_means'] %}
-                        <tr>
-                            <td>{{ cluster_data.cluster }}</td>
-                            {% for feature_name in session['cluster_mean_features'] %}
-                                <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
+                        </thead>
+                        <tbody>
+                            {% for component_data in session['pca_features_contribution'] %}
+                                {% for feature in component_data.features %}
+                                    <tr>
+                                        {% if loop.first %}
+                                            <td rowspan="{{ component_data.features|length }}">Component {{ component_data.component }}</td>
+                                        {% endif %}
+                                        <td>{{ feature.name }}</td>
+                                        <td>{{ "%.4f" | format(feature.weight) }}</td>
+                                    </tr>
+                                {% endfor %}
                             {% endfor %}
-                            <td>{{ cluster_data.interpretation }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
+                        </tbody>
+                    </table>
+                </section>
+            {% endif %}
 
-    {% endif %}
+            {% if session.get('cluster_means') and session.get('cluster_mean_features') %}
+                <section class="card fade-in">
+                    <h2>Cluster Mean Values for Top Features</h2>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Cluster</th>
+                                {% for feature_name in session['cluster_mean_features'] %}
+                                    <th>{{ feature_name }}</th>
+                                {% endfor %}
+                                <th>Interpretation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cluster_data in session['cluster_means'] %}
+                                <tr>
+                                    <td>{{ cluster_data.cluster }}</td>
+                                    {% for feature_name in session['cluster_mean_features'] %}
+                                        <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
+                                    {% endfor %}
+                                    <td>{{ cluster_data.interpretation }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </section>
+            {% endif %}
+
+        {% endif %}
+    </main>
 </body>
 </html>
