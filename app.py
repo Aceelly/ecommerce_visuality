@@ -31,7 +31,7 @@ gemini_api_key = os.getenv("GEMINI_API_KEY")
 if not gemini_api_key or gemini_api_key == "YOUR_API_KEY":
     raise ValueError("GEMINI_API_KEY not found or not set in .env file. Please set your actual Gemini API key.")
 genai.configure(api_key=gemini_api_key)
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
 def get_df_summary(df):
     """Generates an HTML summary of the DataFrame."""
