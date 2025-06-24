@@ -259,16 +259,18 @@ def clusters():
 
                     print(f"DEBUG: cluster_summary_text sent to Gemini:\n{cluster_summary_text}") # DEBUG PRINT
                     prompt_interpretation = f"""
-                    You are a data analyst assistant.
+                    You are a marketing analyst assistant.
                     Given the following cluster mean values for top features:
                     {cluster_summary_text}
 
-                    Provide a one-line, human-readable interpretation or label for each cluster.
+                    Based on these feature averages, generate a **very concise, one-line, human-readable customer profile label** for each cluster.
+                    The label should be easy for a marketing manager to understand and use for segmenting customers, ideally 1-3 words.
+                    Examples of desired labels: "Value Seekers", "Regulars", "Newbies", "Churn Risks", "High Spenders".
                     Return the output as a JSON array of objects, where each object has "cluster" (integer) and "interpretation" (string) keys.
                     Example:
                     [
-                      {{"cluster": 0, "interpretation": "Budget-Conscious Buyers"}},
-                      {{"cluster": 1, "interpretation": "High-Value Loyal Customers"}}
+                      {{"cluster": 0, "interpretation": "Value Seekers"}},
+                      {{"cluster": 1, "interpretation": "Regulars"}}
                     ]
                     """
                     response_interpretation = model.generate_content(prompt_interpretation)
