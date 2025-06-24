@@ -24,11 +24,33 @@
             <p class="error-message">{{ error_message }}</p>
         {% endif %}
 
-        {% if df_summary %}
+        {% if df_head_html and df_dtypes_data %}
             <section class="card fade-in">
                 <h2>Dataset Summary</h2>
-                <div>
-                    {{ df_summary | safe }}
+                <div class="table-responsive">
+                    {{ df_head_html | safe }}
+                </div>
+            </section>
+
+            <section class="card fade-in">
+                <h2>Columns and Data Types</h2>
+                <div class="table-responsive">
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Column Name</th>
+                                <th>Data Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in df_dtypes_data %}
+                                <tr>
+                                    <td>{{ item.column_name }}</td>
+                                    <td>{{ item.data_type }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </section>
 

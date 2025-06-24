@@ -34,20 +34,24 @@ genai.configure(api_key=gemini_api_key)
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
 def get_df_summary(df):
-    """Generates an HTML summary of the DataFrame."""
-    # Manually construct the info string to avoid issues with df.info() output capture
-    info_str = "Data types:\n"
-    for col, dtype in df.dtypes.items():
-        info_str += f"{col}: {dtype}\n"
-    info_str += f"\nShape: {df.shape}\n"
-    info_str += f"Number of entries: {len(df)}\n"
+    """Generates HTML for DataFrame head and structured data for dtypes."""
+    df_head_html = df.head().to_html()
 
-    return df.head().to_html() + \
-           f"<h3>Columns and Data Types:</h3><pre>{info_str}</pre>"
+    # Prepare data for columns and dtypes table
+    df_dtypes_data = []
+    for col, dtype in df.dtypes.items():
+        df_dtypes_data.append({'column_name': col, 'data_type': str(dtype)})
+    
+    # Add shape and number of entries separately if needed, or integrate into dtypes table
+    # For now, let's just focus on column name and data type as a table.
+    # We can add shape/entries as simple text below the table if desired.
+
+    return df_head_html, df_dtypes_data
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    df_summary = None
+    df_head_html = None
+    df_dtypes_data = None
     visualization = None
     error_message = None
 
@@ -62,7 +66,7 @@ def index():
                     df_id = str(uuid.uuid4())
                     dataframes[df_id] = df # Store DataFrame in global dictionary
                     session['df_id'] = df_id # Store ID in session
-                    df_summary = get_df_summary(df)
+                    df_head_html, df_dtypes_data = get_df_summary(df)
                 except Exception as e:
                     error_message = f"Error reading CSV: {e}"
         elif 'query' in request.form:
@@ -162,14 +166,14 @@ def index():
 
     if 'df_id' in session and session['df_id'] in dataframes:
         df = dataframes[session['df_id']]
-        df_summary = get_df_summary(df)
+        df_head_html, df_dtypes_data = get_df_summary(df)
     
     # Retrieve visualization from global dictionary using ID from session
     visualization_id = session.get('visualization_id', None)
     visualization = visualizations.get(visualization_id, None) if visualization_id else None
     query_result_text = session.get('query_result_text', None)
 
-    return render_template('index.html', df_summary=df_summary, visualization=visualization, error_message=error_message, query_result_text=query_result_text)
+    return render_template('index.html', df_head_html=df_head_html, df_dtypes_data=df_dtypes_data, visualization=visualization, error_message=error_message, query_result_text=query_result_text)
 
 @app.route('/clusters', methods=['GET'])
 def clusters():
