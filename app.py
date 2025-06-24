@@ -203,6 +203,7 @@ def clusters():
                 # In a real application, you might use elbow method or silhouette score to determine optimal k
                 kmeans = KMeans(n_clusters=3, random_state=42, n_init=10) # n_init to suppress warning
                 cluster_labels = kmeans.fit_predict(pca_data)
+                session['cluster_labels'] = cluster_labels.tolist() # Store cluster labels in session
 
                 # Calculate feature contributions to PCA components
                 feature_names = numerical_df.columns
@@ -328,6 +329,26 @@ def clusters():
     
     # Redirect to index page to display the visualization
     return redirect(url_for('index'))
+
+@app.route('/cluster_details/<int:cluster_id>')
+def cluster_details(cluster_id):
+    if 'df_id' in session and session['df_id'] in dataframes and 'cluster_labels' in session:
+        df = dataframes[session['df_id']]
+        cluster_labels = session['cluster_labels']
+        
+        # Add cluster labels to the original DataFrame
+        df_with_clusters = df.copy()
+        df_with_clusters['cluster'] = cluster_labels
+        
+        # Filter for the selected cluster
+        cluster_df = df_with_clusters[df_with_clusters['cluster'] == cluster_id]
+        
+        # Convert to HTML
+        cluster_html = cluster_df.to_html(classes='table table-striped', index=False)
+        
+        return render_template('cluster_details.html', cluster_id=cluster_id, cluster_table=cluster_html)
+    else:
+        return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -110,6 +110,10 @@ th {
     background-color: var(--color-hopbush);
     color: var(--color-white);
     font-weight: bold;
+    position: sticky; /* Make header sticky */
+    top: 0; /* Stick to the top of the scrollable container */
+    z-index: 10; /* Ensure it stays above scrolling content */
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for depth */
 }
 
 tr:nth-child(even) {
@@ -159,9 +163,10 @@ pre {
 .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    margin-top: 15px; /* Add some space above the table */
+    /* margin-top: 15px; Removed as it's now part of .table-container */
     padding-bottom: 10px; /* Space for scrollbar */
 }
+
 
 /* Hidden content class */
 .hidden-content {
