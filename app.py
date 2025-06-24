@@ -332,10 +332,18 @@ def clusters():
 
 @app.route('/cluster_details/<int:cluster_id>')
 def cluster_details(cluster_id):
-    if 'df_id' in session and session['df_id'] in dataframes and 'cluster_labels' in session:
+    cluster_interpretation = "N/A" # Default value
+    if 'df_id' in session and session['df_id'] in dataframes and 'cluster_labels' in session and 'cluster_means' in session:
         df = dataframes[session['df_id']]
         cluster_labels = session['cluster_labels']
+        cluster_means_data = session['cluster_means']
         
+        # Find the interpretation for the current cluster_id
+        for cluster_data in cluster_means_data:
+            if cluster_data['cluster'] == cluster_id:
+                cluster_interpretation = cluster_data.get('interpretation', 'N/A')
+                break
+
         # Add cluster labels to the original DataFrame
         df_with_clusters = df.copy()
         df_with_clusters['cluster'] = cluster_labels
@@ -346,7 +354,8 @@ def cluster_details(cluster_id):
         # Convert to HTML
         cluster_html = cluster_df.to_html(classes='table table-striped', index=False)
         
-        return render_template('cluster_details.html', cluster_id=cluster_id, cluster_table=cluster_html)
+        return render_template('cluster_details.html', cluster_id=cluster_id, 
+                               cluster_table=cluster_html, cluster_interpretation=cluster_interpretation)
     else:
         return redirect(url_for('index'))
 
