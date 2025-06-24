@@ -62,6 +62,26 @@
                 </form>
             </section>
 
+            {% if visualization %}
+                <section class="card fade-in">
+                    <h2>Visualization</h2>
+                    <img src="data:image/png;base64,{{ visualization }}" alt="Generated Visualization">
+                    <form action="/" method="post">
+                        <input type="hidden" name="clear_visualization" value="true">
+                        <input type="submit" value="Clear Visualization" class="clear-button">
+                    </form>
+                </section>
+            {% elif query_result_text %}
+                <section class="card fade-in">
+                    <h2>Query Result</h2>
+                    <pre>{{ query_result_text }}</pre>
+                    <form action="/" method="post">
+                        <input type="hidden" name="clear_visualization" value="true">
+                        <input type="submit" value="Clear Result" class="clear-button">
+                    </form>
+                </section>
+            {% endif %}
+
             <section class="card fade-in">
                 <h2>Clustering Analysis</h2>
                 <form action="/clusters" method="get">
@@ -72,26 +92,6 @@
                     <button id="toggleClusteringDetails" class="clear-button" style="margin-top: 20px;">Show Clustering Details</button>
 
                     <section id="clustering-details" class="hidden-content">
-                        {% if visualization %}
-                            <section class="card fade-in">
-                                <h2>Visualization</h2>
-                                <img src="data:image/png;base64,{{ visualization }}" alt="Generated Visualization">
-                                <form action="/" method="post">
-                                    <input type="hidden" name="clear_visualization" value="true">
-                                    <input type="submit" value="Clear Visualization" class="clear-button">
-                                </form>
-                            </section>
-                        {% elif query_result_text %}
-                            <section class="card fade-in">
-                                <h2>Query Result</h2>
-                                <pre>{{ query_result_text }}</pre>
-                                <form action="/" method="post">
-                                    <input type="hidden" name="clear_visualization" value="true">
-                                    <input type="submit" value="Clear Result" class="clear-button">
-                                </form>
-                            </section>
-                        {% endif %}
-
                         {% if session.get('pca_features_contribution') %}
                             <section class="card fade-in">
                                 <h2>PCA Feature Contributions</h2>
