@@ -67,85 +67,108 @@
                 <form action="/clusters" method="get">
                     <input type="submit" value="Perform K-Means Clustering">
                 </form>
-            </section>
 
-            {% if visualization %}
-                <section class="card fade-in">
-                    <h2>Visualization</h2>
-                    <img src="data:image/png;base64,{{ visualization }}" alt="Generated Visualization">
-                    <form action="/" method="post">
-                        <input type="hidden" name="clear_visualization" value="true">
-                        <input type="submit" value="Clear Visualization" class="clear-button">
-                    </form>
-                </section>
-            {% elif query_result_text %}
-                <section class="card fade-in">
-                    <h2>Query Result</h2>
-                    <pre>{{ query_result_text }}</pre>
-                    <form action="/" method="post">
-                        <input type="hidden" name="clear_visualization" value="true">
-                        <input type="submit" value="Clear Result" class="clear-button">
-                    </form>
-                </section>
-            {% endif %}
+                {% if session.get('cluster_means') and session.get('cluster_mean_features') %}
+                    <button id="toggleClusteringDetails" class="clear-button" style="margin-top: 20px;">Show Clustering Details</button>
 
-            {% if session.get('pca_features_contribution') %}
-                <section class="card fade-in">
-                    <h2>PCA Feature Contributions</h2>
-                    <table border="1">
-                        <thead>
-                            <tr>
-                                <th>PCA Component</th>
-                                <th>Feature Name</th>
-                                <th>Weight (Absolute)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for component_data in session['pca_features_contribution'] %}
-                                {% for feature in component_data.features %}
+                    <section id="clustering-details" class="hidden-content">
+                        {% if visualization %}
+                            <section class="card fade-in">
+                                <h2>Visualization</h2>
+                                <img src="data:image/png;base64,{{ visualization }}" alt="Generated Visualization">
+                                <form action="/" method="post">
+                                    <input type="hidden" name="clear_visualization" value="true">
+                                    <input type="submit" value="Clear Visualization" class="clear-button">
+                                </form>
+                            </section>
+                        {% elif query_result_text %}
+                            <section class="card fade-in">
+                                <h2>Query Result</h2>
+                                <pre>{{ query_result_text }}</pre>
+                                <form action="/" method="post">
+                                    <input type="hidden" name="clear_visualization" value="true">
+                                    <input type="submit" value="Clear Result" class="clear-button">
+                                </form>
+                            </section>
+                        {% endif %}
+
+                        {% if session.get('pca_features_contribution') %}
+                            <section class="card fade-in">
+                                <h2>PCA Feature Contributions</h2>
+                                <table border="1">
+                                    <thead>
+                                        <tr>
+                                            <th>PCA Component</th>
+                                            <th>Feature Name</th>
+                                            <th>Weight (Absolute)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for component_data in session['pca_features_contribution'] %}
+                                            {% for feature in component_data.features %}
+                                                <tr>
+                                                    {% if loop.first %}
+                                                        <td rowspan="{{ component_data.features|length }}">Component {{ component_data.component }}</td>
+                                                    {% endif %}
+                                                    <td>{{ feature.name }}</td>
+                                                    <td>{{ "%.4f" | format(feature.weight) }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </section>
+                        {% endif %}
+                    </section>
+
+                    <section class="card fade-in">
+                        <h2>Cluster Mean Values for Top Features</h2>
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <th>Cluster</th>
+                                    {% for feature_name in session['cluster_mean_features'] %}
+                                        <th>{{ feature_name }}</th>
+                                    {% endfor %}
+                                    <th>Interpretation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cluster_data in session['cluster_means'] %}
                                     <tr>
-                                        {% if loop.first %}
-                                            <td rowspan="{{ component_data.features|length }}">Component {{ component_data.component }}</td>
-                                        {% endif %}
-                                        <td>{{ feature.name }}</td>
-                                        <td>{{ "%.4f" | format(feature.weight) }}</td>
+                                        <td>{{ cluster_data.cluster }}</td>
+                                        {% for feature_name in session['cluster_mean_features'] %}
+                                            <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
+                                        {% endfor %}
+                                        <td>{{ cluster_data.interpretation }}</td>
                                     </tr>
                                 {% endfor %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </section>
-            {% endif %}
-
-            {% if session.get('cluster_means') and session.get('cluster_mean_features') %}
-                <section class="card fade-in">
-                    <h2>Cluster Mean Values for Top Features</h2>
-                    <table border="1">
-                        <thead>
-                            <tr>
-                                <th>Cluster</th>
-                                {% for feature_name in session['cluster_mean_features'] %}
-                                    <th>{{ feature_name }}</th>
-                                {% endfor %}
-                                <th>Interpretation</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cluster_data in session['cluster_means'] %}
-                                <tr>
-                                    <td>{{ cluster_data.cluster }}</td>
-                                    {% for feature_name in session['cluster_mean_features'] %}
-                                        <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
-                                    {% endfor %}
-                                    <td>{{ cluster_data.interpretation }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </section>
-            {% endif %}
+                            </tbody>
+                        </table>
+                    </section>
+                {% endif %}
+            </section>
 
         {% endif %}
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('toggleClusteringDetails');
+            const clusteringDetails = document.getElementById('clustering-details');
+
+            if (toggleButton && clusteringDetails) {
+                toggleButton.addEventListener('click', function() {
+                    if (clusteringDetails.classList.contains('show')) {
+                        clusteringDetails.classList.remove('show');
+                        toggleButton.textContent = 'Show Clustering Details';
+                    } else {
+                        clusteringDetails.classList.add('show');
+                        toggleButton.textContent = 'Hide Clustering Details';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
