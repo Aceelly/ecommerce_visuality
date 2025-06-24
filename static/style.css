@@ -161,10 +161,31 @@ pre {
 
 /* Specific styling for responsive tables */
 .table-responsive {
-    overflow-x: auto;
+    overflow: auto; /* Enable both horizontal and vertical scrolling */
+    max-height: 70vh; /* Limit height to 70% of viewport height */
     -webkit-overflow-scrolling: touch;
-    /* margin-top: 15px; Removed as it's now part of .table-container */
     padding-bottom: 10px; /* Space for scrollbar */
+}
+
+/* Styles for the cloned header in cluster_details.html */
+.header-scroll {
+    overflow: hidden;
+    width: 100%;
+}
+
+.cluster-table-header {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.cluster-table-header th {
+    background-color: var(--color-hopbush);
+    color: var(--color-white);
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+    border: 1px solid var(--color-my-pink);
 }
 
 
