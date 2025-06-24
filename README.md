@@ -2,6 +2,7 @@
 This simple application allows the user to create actionable insights from simple exploritory analysis prompts a clustering analysis results.  
 
 Steps to Run:
+1. Edit the .env file with your Gemini API key. 
 1. Go to Directory that application resides
 2. (In terminal run:) ```pip install -r requirements.txt```
 3. (In terminal run:)  ```.\venv\Scripts\activate```
