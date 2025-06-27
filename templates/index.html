@@ -131,6 +131,7 @@
                                     <th>{{ feature_name }}</th>
                                 {% endfor %}
                                 <th>Interpretation</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -141,6 +142,7 @@
                                         <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
                                     {% endfor %}
                                     <td>{{ cluster_data.interpretation }}</td>
+                                    <td><a href="{{ url_for('cluster_details', cluster_id=cluster_data.cluster) }}" target="_blank">View Members</a></td>
                                 </tr>
                             {% endfor %}
                         </tbody>
