@@ -93,7 +93,7 @@
 
                     <section id="clustering-details" class="hidden-content">
                         {% if session.get('pca_features_contribution') %}
-                            <section class="card fade-in">
+                            <section class="fade-in" style="padding: 0 25px;"> <!-- Removed card class, kept padding -->
                                 <h2>PCA Feature Contributions</h2>
                                 <table border="1">
                                     <thead>
@@ -121,7 +121,7 @@
                         {% endif %}
                     </section>
 
-                    <section class="card fade-in">
+                    <section class="fade-in" style="padding: 0 25px;"> <!-- Removed card class, kept padding -->
                         <h2>Cluster Mean Values for Top Features</h2>
                         <table border="1">
                         <thead>
@@ -131,7 +131,6 @@
                                     <th>{{ feature_name }}</th>
                                 {% endfor %}
                                 <th>Interpretation</th>
-                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -142,16 +141,15 @@
                                         <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
                                     {% endfor %}
                                     <td>{{ cluster_data.interpretation }}</td>
-                                    <td><a href="{{ url_for('cluster_details', cluster_id=cluster_data.cluster) }}" target="_blank">View Members</a></td>
                                 </tr>
                             {% endfor %}
                         </tbody>
                         </table>
                     </section>
                 {% endif %}
+                    </section>
+                {% endif %}
             </section>
-
-        {% endif %}
     </main>
 
     <script>
