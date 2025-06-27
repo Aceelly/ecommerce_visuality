@@ -224,37 +224,36 @@ def clusters():
                 session['pca_features_contribution'] = pca_features_contribution # Store in session
 
                 # Calculate mean values of top 3 PCA features for each cluster
-                # First, get the names of the top 3 features across all components
-                top_3_feature_names = []
+                # Get all unique feature names from PCA components 1 and 2
+                all_pca_feature_names = []
                 for comp_data in pca_features_contribution:
                     for feature in comp_data['features']:
-                        if feature['name'] not in top_3_feature_names:
-                            top_3_feature_names.append(feature['name'])
-                top_3_feature_names = top_3_feature_names[:3] # Ensure only top 3 unique features
+                        if feature['name'] not in all_pca_feature_names:
+                            all_pca_feature_names.append(feature['name'])
 
-                if top_3_feature_names:
+                if all_pca_feature_names:
                     # Add cluster labels to the numerical DataFrame
                     numerical_df_with_clusters = numerical_df.copy()
                     numerical_df_with_clusters['cluster'] = cluster_labels
 
-                    # Calculate mean values for top features by cluster
-                    cluster_means_df = numerical_df_with_clusters.groupby('cluster')[top_3_feature_names].mean()
+                    # Calculate mean values for all PCA features by cluster
+                    cluster_means_df = numerical_df_with_clusters.groupby('cluster')[all_pca_feature_names].mean()
                     
                     # Convert to a list of dictionaries for easier Jinja2 templating
                     cluster_means_data = []
                     for cluster_id, row in cluster_means_df.iterrows():
                         cluster_data = {'cluster': cluster_id}
-                        for feature_name in top_3_feature_names:
+                        for feature_name in all_pca_feature_names:
                             cluster_data[feature_name] = row[feature_name]
                         cluster_means_data.append(cluster_data)
                     session['cluster_means'] = cluster_means_data # Store in session
-                    session['cluster_mean_features'] = top_3_feature_names # Store feature names for header
+                    session['cluster_mean_features'] = all_pca_feature_names # Store feature names for header
 
                     # Generate cluster interpretations using Gemini
                     cluster_summary_text = "Cluster Mean Values for Top Features:\n"
                     for cluster_data in cluster_means_data:
                         cluster_summary_text += f"Cluster {cluster_data['cluster']}: "
-                        for feature_name in top_3_feature_names:
+                        for feature_name in all_pca_feature_names:
                             cluster_summary_text += f"{feature_name}={cluster_data[feature_name]:.2f}, "
                         cluster_summary_text = cluster_summary_text.rstrip(', ') + "\n"
 
