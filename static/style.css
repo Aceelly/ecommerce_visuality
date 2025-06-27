@@ -210,3 +210,17 @@ pre {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Specific styles for the cluster means table */
+.cluster-means-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.cluster-means-table th,
+.cluster-means-table td {
+    font-size: 12px; /* Smaller font size */
+    word-wrap: break-word; /* Wrap long text */
+    max-width: 150px; /* Limit column width */
+    min-width: 80px; /* Ensure columns don't collapse too much */
+}

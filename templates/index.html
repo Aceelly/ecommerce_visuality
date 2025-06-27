@@ -57,7 +57,7 @@
             <section class="card fade-in">
                 <h2>Ask a Question</h2>
                 <form action="/" method="post">
-                    <textarea name="query" rows="4" cols="50" placeholder="e.g., Show purchase frequency by age group"></textarea><br>
+                    <textarea name="query" rows="4" cols="50" placeholder="e.g. Show purchase frequency by age group"></textarea><br>
                     <input type="submit" value="Get Insight">
                 </form>
             </section>
@@ -123,35 +123,36 @@
 
                     <section class="fade-in" style="padding: 0 25px;"> <!-- Removed card class, kept padding -->
                         <h2>Cluster Mean Values for Top Features</h2>
-                        <table border="1">
-                        <thead>
-                            <tr>
-                                <th>Cluster</th>
-                                {% for feature_name in session['cluster_mean_features'] %}
-                                    <th>{{ feature_name }}</th>
-                                {% endfor %}
-                                <th>Interpretation</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cluster_data in session['cluster_means'] %}
+                        <div class="table-responsive">
+                            <table border="1" class="cluster-means-table">
+                            <thead>
                                 <tr>
-                                    <td>{{ cluster_data.cluster }}</td>
+                                    <th>Cluster</th>
                                     {% for feature_name in session['cluster_mean_features'] %}
-                                        <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
+                                        <th>{{ feature_name }}</th>
                                     {% endfor %}
-                                    <td>{{ cluster_data.interpretation }}</td>
-                                    <td><a href="{{ url_for('cluster_details', cluster_id=cluster_data.cluster) }}" target="_blank">View Members</a></td>
+                                    <th>Interpretation</th>
+                                    <th>Actions</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                        </table>
-                    </section>
-                {% endif %}
+                            </thead>
+                            <tbody>
+                                {% for cluster_data in session['cluster_means'] %}
+                                    <tr>
+                                        <td>{{ cluster_data.cluster }}</td>
+                                        {% for feature_name in session['cluster_mean_features'] %}
+                                            <td>{{ "%.4f" | format(cluster_data[feature_name]) }}</td>
+                                        {% endfor %}
+                                        <td>{{ cluster_data.interpretation }}</td>
+                                        <td><a href="{{ url_for('cluster_details', cluster_id=cluster_data.cluster) }}" target="_blank">View Members</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            </table>
+                        </div>
                     </section>
                 {% endif %}
             </section>
+        {% endif %}
     </main>
 
     <script>
