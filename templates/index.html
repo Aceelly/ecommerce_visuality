@@ -13,7 +13,7 @@
 
     <main>
         <section class="card">
-            <h2>Upload CSV File</h2>
+            <h2>Upload CSV File <button class="help-button" data-tooltip="Upload your e-commerce data in CSV format. The application will automatically detect numerical columns for analysis.">?</button></h2>
             <form action="/" method="post" enctype="multipart/form-data">
                 <input type="file" name="file" accept=".csv">
                 <input type="submit" value="Upload CSV">
@@ -55,7 +55,7 @@
             </section>
 
             <section class="card fade-in">
-                <h2>Ask a Question</h2>
+                <h2>Ask a Question <button class="help-button" data-tooltip="Ask questions about your data in natural language. For example: 'Show me a bar chart of purchase categories' or 'What is the average purchase amount by age?'.">?</button></h2>
                 <form action="/" method="post">
                     <textarea name="query" rows="4" cols="50" placeholder="e.g. Show purchase frequency by age group"></textarea><br>
                     <input type="submit" value="Get Insight">
@@ -83,7 +83,7 @@
             {% endif %}
 
             <section class="card fade-in">
-                <h2>Clustering Analysis</h2>
+                <h2>Clustering Analysis <button class="help-button" data-tooltip="This analysis uses K-Means clustering to group your data into segments based on their numerical features. PCA is used to reduce the data to 2 dimensions for visualization.">?</button></h2>
                 <form action="/clusters" method="get">
                     <input type="submit" value="Perform K-Means Clustering">
                 </form>
@@ -178,6 +178,41 @@
                     }
                 });
             }
+
+            // Help button modal logic
+            const helpButtons = document.querySelectorAll('.help-button');
+            helpButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tooltipText = this.getAttribute('data-tooltip');
+                    
+                    // Remove existing modals
+                    const existingModal = document.querySelector('.modal');
+                    if (existingModal) {
+                        existingModal.remove();
+                    }
+
+                    // Create and show new modal
+                    const modal = document.createElement('div');
+                    modal.classList.add('modal');
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <span class="close-button">&times;</span>
+                            <p>${tooltipText}</p>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+
+                    // Close modal logic
+                    modal.querySelector('.close-button').addEventListener('click', function() {
+                        modal.remove();
+                    });
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal) {
+                            modal.remove();
+                        }
+                    });
+                });
+            });
         });
     </script>
 </body>
