@@ -150,6 +150,13 @@
                             </table>
                         </div>
                     </section>
+
+                    <section class="fade-in" style="padding: 0 25px;"> <!-- Removed card class, kept padding -->
+                        <h2>Cluster Explanations</h2>
+                        {% for cluster_data in session['cluster_means'] %}
+                            <p><strong>Cluster {{ cluster_data.cluster }} ({{ cluster_data.interpretation }}):</strong> {{ cluster_data.explanation }}</p>
+                        {% endfor %}
+                    </section>
                 {% endif %}
             </section>
         {% endif %}

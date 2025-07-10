@@ -288,8 +288,34 @@ def clusters():
                         print(f"DEBUG: Interpretation map:\n{interpretation_map}") # DEBUG PRINT
                         for cluster_data in cluster_means_data:
                             cluster_data['interpretation'] = interpretation_map.get(cluster_data['cluster'], 'N/A')
-                        session['cluster_means'] = cluster_means_data # Update session with interpretations
-                        print(f"DEBUG: Final cluster_means_data with interpretations:\n{session['cluster_means']}") # DEBUG PRINT
+                        
+                        # Generate detailed explanations for each cluster
+                        prompt_explanation = f"""
+                        You are a marketing analyst assistant.
+                        Given the following cluster mean values for top features:
+                        {cluster_summary_text}
+
+                        For each cluster, provide a brief, one-sentence, plain-language explanation of what the cluster means.
+                        Return the output as a JSON array of objects, where each object has "cluster" (integer) and "explanation" (string) keys.
+                        Example:
+                        [
+                          {{"cluster": 0, "explanation": "This cluster represents customers who are budget-conscious and make frequent, low-value purchases."}},
+                          {{"cluster": 1, "explanation": "This cluster represents high-value, loyal customers who are not sensitive to discounts."}}
+                        ]
+                        """
+                        response_explanation = model.generate_content(prompt_explanation)
+                        explanations_json = response_explanation.text.strip()
+                        if explanations_json.startswith("```json"):
+                            explanations_json = explanations_json.lstrip("```json").rstrip("```").strip()
+                        
+                        explanations = json.loads(explanations_json)
+                        explanation_map = {item['cluster']: item['explanation'] for item in explanations}
+                        
+                        for cluster_data in cluster_means_data:
+                            cluster_data['explanation'] = explanation_map.get(cluster_data['cluster'], 'N/A')
+                        
+                        session['cluster_means'] = cluster_means_data # Update session with interpretations and explanations
+                        print(f"DEBUG: Final cluster_means_data with interpretations and explanations:\n{session['cluster_means']}") # DEBUG PRINT
                     except json.JSONDecodeError as e:
                         error_message = f"Error parsing Gemini interpretation: {e}. Raw response: {interpretations_json}"
                         print(f"ERROR: JSONDecodeError: {e}. Raw response: {interpretations_json}") # DEBUG PRINT
