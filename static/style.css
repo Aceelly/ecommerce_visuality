@@ -23,7 +23,8 @@ body {
 h1, h2 {
     color: var(--color-hopbush);
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Consistent spacing */
+    margin-top: 0; /* Remove default top margin */
 }
 
 main {
@@ -36,7 +37,7 @@ main {
 
 .card {
     background-color: var(--color-white);
-    padding: 25px;
+    padding: 20px; /* Reduced padding */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
@@ -326,6 +327,10 @@ pre {
     word-wrap: break-word; /* Wrap long text */
     max-width: 150px; /* Limit column width */
     min-width: 80px; /* Ensure columns don't collapse too much */
+}
+
+.cluster-explanation {
+    line-height: 1.6; /* Increased line spacing */
 }
 
 /* Back to Top button styles */
