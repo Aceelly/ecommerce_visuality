@@ -162,6 +162,8 @@
         {% endif %}
     </main>
 
+    <button id="backToTopBtn" title="Go to top">Top</button>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const toggleButton = document.getElementById('toggleClusteringDetails');
@@ -212,6 +214,21 @@
                         }
                     });
                 });
+            });
+
+            // Back to Top button logic
+            const backToTopButton = document.getElementById('backToTopBtn');
+            window.onscroll = function() {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    backToTopButton.style.display = "block";
+                } else {
+                    backToTopButton.style.display = "none";
+                }
+            };
+
+            backToTopButton.addEventListener('click', function() {
+                document.body.scrollTop = 0; // For Safari
+                document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
             });
         });
     </script>
