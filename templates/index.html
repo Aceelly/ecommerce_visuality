@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-commerce Data Explorer</title>
+    <title>E-commerce Data Visuality</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
-        <h1>E-commerce Data Explorer</h1>
+        <h1>E-commerce Visuality</h1>
     </header>
 
     <main>
         <section class="card">
             <h2>Upload CSV File <button class="help-button" data-tooltip="Upload your e-commerce data in CSV format. The application will automatically detect numerical columns for analysis.">?</button></h2>
-            <form action="/" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" accept=".csv">
-                <input type="submit" value="Upload CSV">
+            <form action="/" method="post" enctype="multipart/form-data" class="upload-form">
+                <label for="csv-file" class="custom-file-upload">
+                    Choose File
+                </label>
+                <input type="file" name="file" id="csv-file" accept=".csv" style="display: none;" onchange="this.form.submit()">
             </form>
         </section>
 

@@ -54,13 +54,36 @@ form {
     gap: 15px;
 }
 
-input[type="file"] {
-    padding: 10px;
-    border: 1px solid var(--color-my-pink);
+.upload-form {
+    align-items: center; /* Center items horizontally in the form */
+}
+
+.custom-file-upload {
+    background-color: var(--color-hopbush);
+    color: var(--color-white);
+    padding: 12px 20px;
+    border: none;
     border-radius: 5px;
-    background-color: var(--color-white);
-    color: var(--color-purple-heart);
     cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: inline-block; /* Allows padding and margin */
+    margin-bottom: 10px; /* Space between button and file name */
+}
+
+.custom-file-upload:hover {
+    background-color: #b86a92; /* Slightly darker hopbush */
+    transform: translateY(-2px);
+}
+
+.file-name {
+    color: var(--color-purple-heart);
+    font-size: 14px;
+    margin-bottom: 15px; /* Space between file name and submit button */
+}
+
+input[type="file"] { /* This will be hidden, but keeping for completeness */
+    display: none;
 }
 
 input[type="submit"], button {
