@@ -1,8 +1,8 @@
 :root {
     --color-ebb: #1a1a1a;
-    --color-my-pink: #d0744d;
+    --color-my-pink: #111e123d;
     --color-hopbush: #B03A6D;
-    --color-astral: #4682A9;
+    --color-astral: #4A8B8B;
     --color-purple-heart: #0f1d0fe9;
     --color-white: #FFFFFF;
     --color-black: #000000;
@@ -23,8 +23,14 @@ body {
 h1, h2 {
     color: var(--color-hopbush);
     text-align: center;
-    margin-bottom: 15px; /* Consistent spacing */
-    margin-top: 0; /* Remove default top margin */
+    margin-bottom: 12px; /* Consistent spacing */
+    margin-top: 0px; /* Remove default top margin */
+}
+
+.header-logo {
+    max-width: 200px; /* Adjust as needed */
+    margin: 0 auto 20px; /* Center and add space below */
+    display: block;
 }
 
 main {
@@ -117,16 +123,17 @@ textarea {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-radius: 8px;
     overflow: hidden; /* Ensures border-radius applies to table */
 }
 
 th, td {
+    font-size: 14px;
     border: 1px solid var(--color-my-pink);
-    padding: 12px;
-    text-align: left;
+    padding: 5px;
+    text-align: center;
     color: var(--color-purple-heart);
 }
 
@@ -149,8 +156,6 @@ img {
     height: auto;
     display: block;
     margin: 20px auto;
-    border: 1px solid var(--color-my-pink);
-    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -175,8 +180,8 @@ pre {
 
 /* Specific styling for the "Clear" buttons */
 .clear-button {
+    margin: 10px auto;
     background-color: var(--color-astral);
-    margin-top: 10px;
 }
 
 .clear-button:hover {
@@ -188,7 +193,7 @@ pre {
     overflow: auto; /* Enable both horizontal and vertical scrolling */
     max-height: 70vh; /* Limit height to 70% of viewport height */
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 10px; /* Space for scrollbar */
+    padding-bottom: 5px; /* Space for scrollbar */
 }
 
 /* Styles for the cloned header in cluster_details.html */
@@ -290,7 +295,7 @@ pre {
     border-radius: 50%;
     width: 24px;
     height: 24px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
     margin-left: 10px;
@@ -346,7 +351,7 @@ pre {
 
 .cluster-means-table th,
 .cluster-means-table td {
-    font-size: 12px; /* Smaller font size */
+    font-size: 13px;
     word-wrap: break-word; /* Wrap long text */
     max-width: 150px; /* Limit column width */
     min-width: 80px; /* Ensure columns don't collapse too much */
@@ -375,4 +380,11 @@ pre {
 
 #backToTopBtn:hover {
     background-color: #2a6a96;
+}
+
+#toggleClusteringDetails {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 12px;
 }
