@@ -57,7 +57,6 @@ main {
 form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
 }
 
 .upload-form {
@@ -74,7 +73,7 @@ form {
     font-size: 16px;
     transition: background-color 0.3s ease, transform 0.2s ease;
     display: inline-block; /* Allows padding and margin */
-    margin-bottom: 10px; /* Space between button and file name */
+    margin-bottom: 0px; /* Space between button and file name */
 }
 
 .custom-file-upload:hover {
@@ -100,6 +99,7 @@ input[type="submit"], button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    margin: 10px auto;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
@@ -110,10 +110,10 @@ input[type="submit"]:hover, button:hover {
 
 textarea {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     border: 1px solid var(--color-my-pink);
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
     color: var(--color-purple-heart);
     background-color: var(--color-white);
     resize: vertical;
@@ -123,7 +123,7 @@ textarea {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-radius: 8px;
     overflow: hidden; /* Ensures border-radius applies to table */
@@ -185,7 +185,7 @@ pre {
 }
 
 .clear-button:hover {
-    background-color: #2a6a96; /* Slightly darker astral */
+    background-color: #4A8B8B; /* Slightly darker astral */
 }
 
 /* Specific styling for responsive tables */
@@ -306,7 +306,7 @@ pre {
 }
 
 .help-button:hover {
-    background-color: #2a6a96;
+    background-color: #4A8B8B;
 }
 
 .tooltip {
