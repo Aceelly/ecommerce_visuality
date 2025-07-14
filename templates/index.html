@@ -83,7 +83,7 @@
             <section class="card fade-in">
                 <h2>Clustering Analysis <button class="help-button" data-tooltip="This analysis uses K-Means clustering to group your data into segments based on their numerical features. PCA is used to reduce the data to 2 dimensions for visualization.">?</button></h2>
                 <form action="/clusters" method="get">
-                    <input type="submit" value="Perform K-Means Clustering">
+                    <input type="submit" value="Perform Clustering Analysis">
                 </form>
 
                 {% if session.get('cluster_means') and session.get('cluster_mean_features') %}
@@ -151,9 +151,26 @@
 
                     <section class="fade-in" style="padding: 0 25px;"> <!-- Removed card class, kept padding -->
                         <h2>Cluster Explanations</h2>
-                        {% for cluster_data in session['cluster_means'] %}
-                            <p><strong>Cluster {{ cluster_data.cluster }} ({{ cluster_data.interpretation }}):</strong> {{ cluster_data.explanation }}</p>
-                        {% endfor %}
+                        <div class="table-responsive">
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>Cluster</th>
+                                        <th>Interpretation</th>
+                                        <th>Explanation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cluster_data in session['cluster_means'] %}
+                                        <tr>
+                                            <td>{{ cluster_data.cluster }}</td>
+                                            <td>{{ cluster_data.interpretation }}</td>
+                                            <td>{{ cluster_data.explanation }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </section>
                 {% endif %}
             </section>
